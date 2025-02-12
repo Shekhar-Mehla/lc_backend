@@ -20,4 +20,12 @@ dbConnection()
   })
   .catch((error) => console.log(error));
 server.use("/api/v1/auth", AuthRouter);
+
+// page not found error handler
+server.use((req, res, next) => {
+  const error =  new Error("Page not found");
+  error.statusCode = 404
+
+  next(error);
+});
 server.use(errorMiddleaware);

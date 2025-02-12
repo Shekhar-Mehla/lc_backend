@@ -1,10 +1,14 @@
 import Joi from "joi";
 import {
+  CONFIRMPASSWROD,
+  EMAIL,
   largeString,
   largeStringREQ,
+  PASSWORD,
   smallStringREQ,
 } from "../Utility/Joi/joiConstant.js";
 import errorMiddleaware from "./errorMiddleaware.js";
+import responseClientMiddlleware from "./responseClientMiddlleware.js";
 // name: { type: String, required: true,},
 //   email: { type: String, required: true, unique: true },
 //   password: { type: String, required: true },
@@ -17,17 +21,32 @@ import errorMiddleaware from "./errorMiddleaware.js";
 export const newUserDataValidation = (req, res, next) => {
   const obj = Joi.object({
     name: smallStringREQ,
-    email: largeStringREQ,
-    password: smallStringREQ,
+    email: EMAIL,
+    password: PASSWORD,
     location: largeString,
+    confirmedPassword: CONFIRMPASSWROD,
   });
 
   return dataValidationProcesser({ req, res, next, obj });
 };
 
 const dataValidationProcesser = ({ req, res, next, obj }) => {
-  const { value, error } = obj.validate(req.body);
-  if (error) {
+  try {
+    const { value, error } = obj.validate(req.body);
+    if (!error) {
+      return next();
+    }
+
+    const message = error.message;
+    const statusCode = 403;
+
+    return responseClientMiddlleware({
+      req,
+      res,
+      statusCode,
+      message,
+    });
+  } catch (error) {
     next(error);
   }
 };

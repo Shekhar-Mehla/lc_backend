@@ -1,16 +1,15 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-  name: { type: String, required: true,},
+  name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  locations: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Location",
-    },
-  ],
+
+  location: {
+    type: String,
+    required: true,
+  },
 });
 
-const userCollection = mongoose.model("user", userSchema);
+const userCollection = new mongoose.model("user", userSchema);
 export default userCollection;
