@@ -10,4 +10,10 @@ export const  updateUser = async (filter,update) => {
   const user = await userCollection.findOneAndUpdate(filter,update,{new:true})
   return user;
 };
+export const  getUserByEmail=async(email)  => {
+  
+
+  const user = await userCollection.findOne({email})
+  return user;
+};
 

@@ -4,3 +4,6 @@ export const encyptedPassword = (password) => {
   const hash = bcrypt.hashSync(password, saltRounds);
   return hash;
 };
+export const comparePassword = (password, Dbpassword) => {
+  return bcrypt.compareSync(password, Dbpassword);
+};

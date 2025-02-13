@@ -3,14 +3,19 @@ import {
   createSession,
   deleteSession,
 } from "../models/SessionModel/SessionModel.js";
-import { insertUserInDb, updateUser } from "../models/UserModel/UserModel.js";
+import {
+  getUserByEmail,
+  insertUserInDb,
+  updateUser,
+} from "../models/UserModel/UserModel.js";
 import { transporter } from "../services/emailSender.js";
 import {
   userAccountActivatedNotification,
   userActivationTemplate,
 } from "../services/emailTemplate.js";
-import { encyptedPassword } from "../Utility/bcrypt.js";
+import { comparePassword, encyptedPassword } from "../Utility/bcrypt.js";
 import { v4 as uuidv4 } from "uuid";
+import { createJwt } from "../Utility/JWT/jwt.js";
 
 // inset new user
 export const insertUser = async (req, res, next) => {
@@ -91,7 +96,7 @@ export const activateUser = async (req, res, next) => {
       if (session?._id) {
         const filter = { email: session.association };
         const update = { status: "active" };
-        console.log(filter);
+
         // now change the status to activat into user table
         const user = await updateUser(filter, update);
 
@@ -121,6 +126,50 @@ export const activateUser = async (req, res, next) => {
       const statusCode = 401;
       const message = "link is invalid";
       return responseClientMiddlleware({ req, res, message, statusCode });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+// login user controller
+
+export const loginUser = async (req, res, next) => {
+  const { email, password } = req.body;
+  try {
+    if (email && password) {
+      // 1. verify if user exits into our db
+
+      const user = await getUserByEmail(email);
+      if (user?._id) {
+        // compare password
+        const isValid = comparePassword(password, user.password);
+        if (isValid) {
+          // create jwts and save into db
+          const jwts = await createJwt(email);
+          return responseClientMiddlleware({
+            req,
+            res,
+            message: "here is jwt",
+            payload: jwts,
+          });
+        }
+        return responseClientMiddlleware({
+          req,
+          res,
+          message: "your password is invalid",
+          statusCode: 401,
+        });
+      }
+      return responseClientMiddlleware({
+        req,
+        res,
+        message:
+          "your data did not found in our database please check your email",
+        statusCode: 401,
+      });
+
+      // 2. verify password is mach or not
+      // 3. create jwts and store into db and response to client
     }
   } catch (error) {
     next(error);

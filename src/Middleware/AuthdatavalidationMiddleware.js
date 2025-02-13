@@ -3,11 +3,10 @@ import {
   CONFIRMPASSWROD,
   EMAIL,
   largeString,
-  largeStringREQ,
   PASSWORD,
   smallStringREQ,
 } from "../Utility/Joi/joiConstant.js";
-import errorMiddleaware from "./errorMiddleaware.js";
+
 import responseClientMiddlleware from "./responseClientMiddlleware.js";
 // name: { type: String, required: true,},
 //   email: { type: String, required: true, unique: true },
@@ -25,6 +24,14 @@ export const newUserDataValidation = (req, res, next) => {
     password: PASSWORD,
     location: largeString,
     confirmedPassword: CONFIRMPASSWROD,
+  });
+
+  return dataValidationProcesser({ req, res, next, obj });
+};
+export const loginUserDataValidation = (req, res, next) => {
+  const obj = Joi.object({
+    email: EMAIL,
+    password: PASSWORD,
   });
 
   return dataValidationProcesser({ req, res, next, obj });
