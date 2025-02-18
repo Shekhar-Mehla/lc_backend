@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { createSession } from "../../models/SessionModel/SessionModel.js";
 import { updateUser } from "../../models/UserModel/UserModel.js";
+import responseClientMiddlleware from "../../Middleware/responseClientMiddlleware.js";
 
 export const createJwt = async (email) => {
   // create accessjwt and store into session db
@@ -65,4 +66,14 @@ const createRefreshJwt = async (email) => {
   } catch (error) {
     return error;
   }
+};
+export const verifyJwt = (token) => {
+  if (token) {
+    try {
+      return jwt.verify(token, process.env.SECRETACCESSJWT);
+    } catch (error) {
+      return error;
+    }
+  }
+  throw new Error("token is not found");
 };

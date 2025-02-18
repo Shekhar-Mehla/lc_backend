@@ -5,7 +5,8 @@ const responseClientMiddlleware = ({
   message,
   payload,
 }) => {
-  const status = statusCode <= 200 ? "success" : "error";
+  const status = statusCode >= 200 && statusCode <= 299 ? "success" : "error";
+  
   return res.status(statusCode).json({
     status,
     message,

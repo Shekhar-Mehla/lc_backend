@@ -3,6 +3,7 @@ import {
   CONFIRMPASSWROD,
   EMAIL,
   largeString,
+  largeStringREQ,
   PASSWORD,
   smallStringREQ,
 } from "../Utility/Joi/joiConstant.js";
@@ -22,7 +23,8 @@ export const newUserDataValidation = (req, res, next) => {
     name: smallStringREQ,
     email: EMAIL,
     password: PASSWORD,
-    location: largeString,
+    latitude: largeString,
+    longitude: largeString,
     confirmedPassword: CONFIRMPASSWROD,
   });
 
